@@ -23,6 +23,11 @@ contract Crowdsale {
 		maxTokens = _maxTokens;
 	}
 
+	receive() external payable {
+		uint256 amount = msg.value / price * 1e18; 
+		buyTokens(amount);
+	}
+
 	function buyTokens(uint256 _amount) public payable {
 		require(msg.value == (_amount / 1e18) * price); 
 		require(token.balanceOf(address(this)) >= _amount);
