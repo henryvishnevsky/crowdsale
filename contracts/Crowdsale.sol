@@ -26,17 +26,33 @@ contract Crowdsale {
 		maxTokens = _maxTokens;
 	}
 
+	mapping(address => bool) public whitelist;
+
 	modifier onlyOwner() {
 		require(msg.sender == owner, 'Caller is not the owner');
 		_;	
 	}
+
+	 modifier onlyWhitelisted() {
+        require(whitelist[msg.sender], "Address is not whitelisted");
+        _;
+    }
 
 	receive() external payable {
 		uint256 amount = msg.value / price * 1e18; 
 		buyTokens(amount);
 	}
 
-	function buyTokens(uint256 _amount) public payable {
+	function addToWhitelist(address _account) public onlyOwner {
+        require(_account != address(0), "Zero address not allowed");
+        whitelist[_account] = true;
+    }
+
+    function removeFromWhitelist(address _account) public onlyOwner {
+        whitelist[_account] = false;
+    }
+
+	function buyTokens(uint256 _amount) public payable onlyWhitelisted {
 		require(msg.value == (_amount / 1e18) * price); 
 		require(token.balanceOf(address(this)) >= _amount);
 		require(token.transfer(msg.sender, _amount));
