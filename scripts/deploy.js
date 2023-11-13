@@ -11,6 +11,7 @@ async function main() {
    const SYMBOL = 'HENRY'
    const MAX_SUPPLY = '1000000'
    const PRICE = ethers.utils.parseUnits('0.025', 'ether')
+   const ALLOW_SALE_ON = (Date.now() + 60000).toString().slice(0, 10)
 
   //Deployment Token
   const Token = await hre.ethers.getContractFactory('Token')
@@ -21,7 +22,7 @@ async function main() {
 
   //Deployment Crowdsale
   const Crowdsale = await hre.ethers.getContractFactory('Crowdsale')
-  const crowdsale = await Crowdsale.deploy(token.address, PRICE, ethers.utils.parseUnits(MAX_SUPPLY, 'ether'))
+  const crowdsale = await Crowdsale.deploy(token.address, PRICE, ethers.utils.parseUnits(MAX_SUPPLY, 'ether'), ALLOW_SALE_ON)
 
   await crowdsale.deployed()
   console.log(`Crowdsale deployed to: ${crowdsale.address}\n`)
